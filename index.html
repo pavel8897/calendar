@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+<body>
+	<div class="calendar"></div>
+</body>
+</html>
+
+<style>
+	table {
+		border: 1px solid #000;
+		border-collapse: collapse; 
+	}
+
+	table th {
+		background: grey;
+	}
+</style>
+
+<script>
+
+	function getDay(date) {
+		let day = date.getDay()
+		if(day == 0) day = 7
+		return day
+	}
+
+	function createCalendar(elem, year, month) {
+		elem = document.querySelector('.' + elem)
+		let mon = month - 1
+		let d = new Date(year, mon)
+		
+		let table = `
+			<table>
+				<tr>
+					<th>Пон</th>
+					<th>Вт</th>
+					<th>Ср</th>
+					<th>Чет</th>
+					<th>Пт</th>
+					<th>Суб</th>
+				</tr>			
+		`
+
+		let tr = ''
+		for(let i=mon;i<=12;i++) {
+			table += '<tr></tr>'
+			for(let j=d;j<=31;j++) {
+				while(j%7==0) {
+					table += `
+						<td>${j}</td>
+					`
+				}
+			}
+		}
+		table += '</tr></table>'
+
+		elem.innerHTML = table
+
+	}
+
+	createCalendar('calendar', 2023, 8)
+
+	
+</script>
+
+
+
+
