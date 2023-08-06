@@ -8,6 +8,7 @@
 <body>
 	<div id="parent">
 		<div id="calendar">
+			<div class="info">Август 2023</div>
 			<table>
 				<thead>
 					<tr>
@@ -22,6 +23,10 @@
 				</thead>
 				<tbody class="body"></tbody>
 			</table>
+			<div class="nav">
+				<a href="#" class="prev">←</a>
+				<a href="#" class="next">→</a>
+			</div>
 		</div>
 	</div>
 </body>
@@ -35,51 +40,136 @@
 		display: inline-block;
 	}
 	#calendar td, #calendar th {
-		padding: 5px 12px;
+		padding: 10px;
 		border: 1px solid black;
 		text-align: center;
+	}
+
+	#calendar .nav, #calendar .info {
+		text-align: center;
+	}
+	#calendar a {
+		color: blue;
+		font-size: 25px;
+		text-decoration: none;
+	}
+	#calendar a:hover {
+		color: red;
+	}
+
+	#calendar .active {
+		color: red;
 	}
 </style>
 
 <script>
 
 	let calendar = document.querySelector('#calendar')
-	let body = document.querySelector('body')
+	let body = document.querySelector('.body')	
+	let prev = document.querySelector('.prev')
+	let next = document.querySelector('.next')
 
 	let date = new Date()
 	let year = date.getFullYear()
 	let month = date.getMonth()
+
+	draw(body, year, month)
+
+	prev.addEventListener('click', function() {
+		draw(body, getPrevYear(year, month), getPrevMonth(month))
+	})
+
+	next.addEventListener('click', function() {
+		draw(body, getNextYear(year, month), getNextMonth(month))
+	})
+
+	function draw(body, year, month) {
+		let arr = range(getLastDay(year, month))
+
+		let firstWeekDay = getFirstWeekDay(year, month)
+		let lastWeekDay = getLastWeekDay(year, month)
+
+		let nums = chunk(normalize(arr, firstWeekDay, 6 - lastWeekDay), 7)
+		createTable(body, nums)
+	}
+
+	function createTable(parent, arr) {
+		parent.textContent = ''
+		let cells = []
+
+		for(let sub of arr) {
+			let tr = document.createElement('tr')
+
+			for(let num of sub) {
+				let td = document.createElement('td')
+				td.textContent = num
+				tr.appendChild(td)
+
+				cells.push(tr)
+			}
+			parent.appendChild(tr)
+		}
+		return cells
+	}
+
+	function normalize(arr, left, right) {
+		for (let i = 0; i < left; i++) {
+			arr.unshift('');
+		}
+		for (var i = 0; i < right; i++) {
+			arr.push('');
+		}
+		
+		return arr;
+	}
 	
-	function range(count) {
-		let arr = []
-		for(i=1;i<=31;i++) {
-			arr.push(i)
-		}		
-		return arr
-	}
-
-	function getLastDay(year, month) {
-		let date = new Date(year, month+1, 0)
-		return date.getDate()
-	}
-
 	function getFirstWeekDay(year, month) {
-		let date = new Date(year, month+1)
-		return date.getDate()
+		let date = new Date(year, month, 0)
+		return date.getDay()
+
+		if(num == 0) {
+			return 6	
+		}else{
+			return num - 1
+		}
 	}
 
 	function getLastWeekDay(year, month) {
 		let date = new Date(year, month+1, 0)
 		let num = date.getDay()
+
 		if(num == 0) {
 			return 6
 		}else{
 			return num - 1
 		}
-		return num
+	}
+	
+	function getLastDay(year, month) {
+		let date = new Date(year, month + 1, 0);
+		return date.getDate();
+	}	
+
+	function range(count) {
+		let arr = []
+		for(i=1;i<=count;i++) {
+			arr.push(i)
+		}
+		return arr
 	}
 
-	let arr = range(getLastDay(year, month))
+	function chunk(arr, n) {
+		let result = [];
+		let count = Math.ceil(arr.length / n);
+		
+		for (let i = 0; i < count; i++) {
+			let elems = arr.splice(0, n);
+			result.push(elems);
+		}
+		
+		return result;
+	}
+
 </script>
 
 
