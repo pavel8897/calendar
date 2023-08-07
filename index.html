@@ -8,7 +8,7 @@
 <body>
 	<div id="parent">
 		<div id="calendar">
-			<div class="info">Август 2023</div>
+			<div class="info"></div>
 			<table>
 				<thead>
 					<tr>
@@ -65,31 +65,33 @@
 <script>
 
 	let calendar = document.querySelector('#calendar')
-	let body = document.querySelector('.body')	
+	let body = document.querySelector('.body')
+	let info = document.querySelector('.info')
+	
 	let prev = document.querySelector('.prev')
 	let next = document.querySelector('.next')
 
+	const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
 	let date = new Date()
 	let year = date.getFullYear()
 	let month = date.getMonth()
 
-	draw(body, year, month)
+	draw(body, info, monthNames, year, month)
 
-	prev.addEventListener('click', function() {
-		draw(body, getPrevYear(year, month), getPrevMonth(month))
-	})
-
-	next.addEventListener('click', function() {
-		draw(body, getNextYear(year, month), getNextMonth(month))
-	})
-
-	function draw(body, year, month) {
+	function draw(body, info, monthNames, year, month) {
 		let arr = range(getLastDay(year, month))
-
+		console.log('range', arr)
+		
 		let firstWeekDay = getFirstWeekDay(year, month)
 		let lastWeekDay = getLastWeekDay(year, month)
+		console.log('firstWeekDay:', firstWeekDay, 'lastWeekDay:', lastWeekDay)
 
 		let nums = chunk(normalize(arr, firstWeekDay, 6 - lastWeekDay), 7)
+		console.log('normalize:', normalize(arr, firstWeekDay, 6 - lastWeekDay))
+		console.log('chunk:', nums)
+		
+		info.innerHTML = monthNames[month] + ' ' + year
+
 		createTable(body, nums)
 	}
 
@@ -174,4 +176,33 @@
 
 
 
+<!--ToDo:
+	- обновлять лист при удаление событий
+	- при редактирование исчезает текст
+	- onclick="onEdit(${i})" (поправить на делегирование)
+	- style="${item.checked ? 'text-decoration: line-through' : ''}" (решить путём навешивания классов)
+	- имена функций
+	- точки с запятой
+	- разделить код
 
+
+draw - отрисовка таблицы
+createTable - создание таблицы (вёрсика)
+normalize - добавление пустых ячеек в начало и конец массива
+
+getFirstWeekDay - получение номера первого дня недели
+getLastWeekDay - получение номера последнего дня недели
+getLastDay - получение последнего дня
+
+range - создание массива
+chunk - разделение массива
+
+
+1) получить количество дней в месяце
+2) создать массив дней месяца
+3) получить первый и последний день на неделе
+4) сделать массив с пустыми ячейками
+5) разбить массив по 7 днгей в неделю
+6) создать таблицу и вывести её в контейнер
+
+-->
